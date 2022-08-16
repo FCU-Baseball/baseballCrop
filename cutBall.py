@@ -1,14 +1,12 @@
 
 from function import *
-
 from model import ballLineModel
-import pandas as pd
-from matplotlib import pyplot as plt
-from sklearn.metrics import mean_absolute_error
-from sklearn.metrics import mean_squared_error
+
 
 os.environ["CUDA_VISIBLE_DEVICES"] = ""
+#存影片資料夾的位置
 tk_path = 'D:/Model_data/08camtemp/'
+#資料夾名稱
 date = "iphone3"
 
 create_folder(tk_path + '{}_ball'.format(date))
@@ -17,12 +15,12 @@ create_folder(tk_path + '{}_ball_line'.format(date))
 
 videoids = os.listdir(tk_path + date)
 
-ballline_ckptpath = r'C:\Users\maxchen\Desktop\Project\code\line_ckpt\autoencoding_test1_2sl.h5'
+ballline_ckptpath = r'C:\Users\maxchen\Desktop\Project\code\line_ckpt\finetune_0510_300300.h5'
 true_ball_to_line_model = ballLineModel()
 true_ball_to_line_model.load_weights(ballline_ckptpath)
 
 for i in videoids:
-    if ".avi" in i:
+    if ".mov" in i:
         pass
     else:
         videoids.remove(i)
