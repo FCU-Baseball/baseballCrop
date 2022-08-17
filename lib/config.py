@@ -1,4 +1,4 @@
-IPHONE = "iphone"
+
 
 class VedioType():
     def __init__(self, string):
@@ -10,7 +10,7 @@ class VedioType():
         self.SIZE_lwlmt # 棒球面積大小下限BALLSIZE_lowwer_limit
         self.DIF_wh     # 棒球區域寬高差需小於 "DIF_wh"
         self.LMT_wh     # 棒球區域寬高需小於 "LMT_wh"
-        if string == IPHONE:
+        if string == "iphone":
             self.iphone()
             
     def iphone(self):

@@ -2,7 +2,10 @@ import os
 import cv2
 import numpy as np
 
-from .config import IPHONE, VedioType
+from .config import VedioType
+
+IPHONE = "iphone"
+CAM = "cam"
 
 # [in]  創建資料夾的路徑
 # [out] 創建資料夾的路徑
@@ -13,7 +16,7 @@ def create_folder(path):
     return path
 
 # [in]  video_name 影片路徑
-# [in]  vedio_type 用什麼拍的影片
+# [in]  vedio_type 用什麼拍的影片 iphone, cam
 # [out] 
 def cutframe(video_name, vedio_type):
     ### Const value ###############
@@ -67,16 +70,38 @@ def cutframe(video_name, vedio_type):
                     # 條件如果有在ROI區域裡，且大概像小正方形
                     if (abs(w - h) < DIF_wh  and (w < LMT_wh and h < LMT_wh) and (y > ROI_ytop) and (y < ROI_ydown) and (x > ROI_xleft) and (x < ROI_xright)):
                         ROI = frame[(y - 5):(y + h + 5), (x - 5):(x + w + 5)]   # 切有球的區域
+                        img = modify_lightness_saturation(
+                                ROI)
                         img = cv2.resize(ROI, (48, 48))                         # 調整照片大小
                         cv2.rectangle(frame,(x,y),(x+w,y+h),(0,255,0),2)        # 畫出切下來的區域
                         ball_frames.append(img)
                         ball_frame_names.append(frame_count)
 
-            frame_count += 1    # 好像有問題
             video_frame.append(frame)
         except cv2.error as e:
             print("err: ", e)
             continue
-        # frame_count += 1  # 是不是要寫在這裡，不然except的frame不會算
+        frame_count += 1
     cap.release()
     return np.array(video_frame), np.array(ball_frames), ball_frame_names
+
+def modify_lightness_saturation(img):
+    f_Img = img.astype(np.float32)
+    f_Img = f_Img / 255.0
+
+    hls_img = cv2.cvtColor(f_Img, cv2.COLOR_BGR2HLS)
+    hls_copy = np.copy(hls_img)
+
+    lightness = 130
+    saturation = 0
+
+    hls_copy[:, :, 1] = (1 + lightness / 100.0) * hls_copy[:, :, 1]
+    hls_copy[:, :, 1][hls_copy[:, :, 1] > 1] = 1
+
+    hls_copy[:, :, 2] = (1 + saturation / 100.0) * hls_copy[:, :, 2]
+    hls_copy[:, :, 2][hls_copy[:, :, 2] > 1] = 1
+
+    result_img = cv2.cvtColor(hls_copy, cv2.COLOR_HLS2RGB)
+    result_img = ((result_img * 255).astype(np.uint8))
+    
+    return result_img
