@@ -72,7 +72,7 @@ def cutframe(video_name, vedio_type):
                         ROI = frame[(y - 5):(y + h + 5), (x - 5):(x + w + 5)]   # 切有球的區域
                         img = modify_lightness_saturation(
                                 ROI)
-                        img = cv2.resize(ROI, (48, 48))                         # 調整照片大小
+                        img = cv2.resize(img, (48, 48))                         # 調整照片大小
                         cv2.rectangle(frame,(x,y),(x+w,y+h),(0,255,0),2)        # 畫出切下來的區域
                         ball_frames.append(img)
                         ball_frame_names.append(frame_count)
